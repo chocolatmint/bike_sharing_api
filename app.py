@@ -58,11 +58,11 @@ def route_add_trip():
     return result
 
 #4
-@app.route('/stations/average_footprint_length') 
-def average_footprint_length():
+@app.route('/stations/average_footprint') 
+def average_footprint():
     conn = make_connection()
-    avg_footprint_length = get_avg_footprint_length(conn)
-    return avg_footprint_length.to_json()
+    avg_footprint = get_avg_footprint(conn)
+    return avg_footprint.to_json()
 
 @app.route('/trips/average_duration') 
 def average_duration_trips():
@@ -143,7 +143,7 @@ def get_trip_id(trip_id, conn):
 
 #3
 def insert_into_stations(data, conn):
-    query = f"""INSERT INTO stations values {data}"""
+    query = f"""INSERT INTO stations VALUES {data}"""
     try:
         conn.execute(query)
     except:
@@ -152,7 +152,7 @@ def insert_into_stations(data, conn):
     return 'OK'
 
 def insert_into_trips(data, conn):
-    query = f"""INSERT INTO trips values {data}"""
+    query = f"""INSERT INTO trips VALUES {data}"""
     try:
         conn.execute(query)
     except:
@@ -161,25 +161,26 @@ def insert_into_trips(data, conn):
     return 'OK'
 
 #4
-def get_avg_footprint_length(conn):
-    query = f"""SELECT avg(footprint_length) FROM stations"""
+def get_avg_footprint(conn):
+    query = f"""SELECT AVG(footprint_length) AS 'Rata-rata Footprint Length', 
+    AVG(footprint_width) 'Rata-rata Footprint Width' FROM stations"""
     result = pd.read_sql_query(query, conn)
     return result 
 
 def get_avg_duration_trips(conn):
-    query = f"""SELECT avg(duration_minutes) FROM trips"""
+    query = f"""SELECT AVG(duration_minutes) AS 'Rata-rata Durasi' FROM trips"""
     result = pd.read_sql_query(query, conn)
     return result 
 
 #5
 def get_total_station_by_council_district(council_district, conn):
-    query = f"""SELECT count(station_id) FROM stations
+    query = f"""SELECT COUNT(station_id) AS 'Total Stasiun' FROM stations
     WHERE council_district = {council_district}"""
     result = pd.read_sql_query(query, conn)
     return result 
 
 def get_avg_duration_by_bike_id(bike_id, conn):
-    query = f"""SELECT avg(duration_minutes) FROM trips
+    query = f"""SELECT AVG(duration_minutes) AS 'Rata-rata Durasi' FROM trips
     WHERE bikeid = {bike_id}"""
     result = pd.read_sql_query(query, conn)
     return result 
